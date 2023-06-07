@@ -1,0 +1,49 @@
+[build-system]
+requires = ["wheel", "setuptools", "attrs>=17.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "baseg"
+authors = [
+  { name = "Edoardo Arnaudo", email = "edoardo.arnaudo@linksfoundation.com" },
+]
+description = "Burned area segmentation from Sentinel-2 images"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+]
+dependencies = [
+  "argdantic[all] >= 0.4.0, < 0.5.0",
+  "ipykernel >= 6.23.1, < 7.0.0",
+  "pytorch-lightning >= 1.9.5, < 2",
+  "tensorboard >= 2.13.0, < 3",
+  "torch @ https://download.pytorch.org/whl/cu117/torch-2.0.1%2Bcu117-cp310-cp310-linux_x86_64.whl",
+  "torchvision @ https://download.pytorch.org/whl/cu117/torchvision-0.15.2%2Bcu117-cp310-cp310-linux_x86_64.whl",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+  "black >= 23.0.0, < 24",
+  "ruff >= 0.0.270, < 0.1.0",
+  "isort >= 5.0.0, < 6",
+]
+doc = []
+test = []
+
+[tool.setuptools.dynamic]
+version = { attr = "baseg.__version__" }
+
+[tool.black]
+line-length = 120
+
+[tool.ruff]
+ignore = ["B008", "C901", "C414"]
+line-length = 120
+
+[tool.isort]
+line_length = 120
+profile = "black"
