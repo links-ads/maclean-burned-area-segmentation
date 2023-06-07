@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "baseg"
 authors = [
   { name = "Edoardo Arnaudo", email = "edoardo.arnaudo@linksfoundation.com" },
+  { name = "Luca Barco", email = "luca.barco@linksfoundation.com" },
 ]
 description = "Burned area segmentation from Sentinel-2 images"
 readme = "README.md"
