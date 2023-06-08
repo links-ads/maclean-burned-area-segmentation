@@ -36,16 +36,13 @@ class RandomTiledBatchSampler(TiledSampler):
         # compute the number of tiles in each image and sum them up
         return sum(
             (width - self.tile_size + 1) * (height - self.tile_size + 1) // (self.stride**2)
-            for width, height in self.image_sizes
+            for width, height in self.shapes
         )
 
     def __iter__(self):
         # sample a random image, then sample a random tile from that image
         for i in self.indices:
-            width, height = self.image_sizes[i]
+            width, height = self.shapes[i]
             x = np.random.randint(0, width - self.tile_size + 1, self.batch_size)
             y = np.random.randint(0, height - self.tile_size + 1, self.batch_size)
-            yield [
-                IndexedBounds(i, (x[j], y[j], x[j] + self.tile_size, y[j] + self.tile_size))
-                for j in range(self.batch_size)
-            ]
+            yield [IndexedBounds(i, (x[j], y[j], self.tile_size, self.tile_size)) for j in range(self.batch_size)]

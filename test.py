@@ -2,7 +2,6 @@ from pathlib import Path
 from mmengine import Config
 from mmengine.registry import init_default_scope
 from mmseg.registry import MODELS
-from mmseg.models import EncoderDecoder
 import torch
 from torch import nn
 
