@@ -1,5 +1,6 @@
 from pathlib import Path
 from baseg.datamodules import EMSDataModule
+from baseg.modules import MMSegModule
 from baseg.utils import get_experiment_name
 from mmengine import Config
 from argdantic import ArgParser, ArgField
