@@ -1,6 +1,7 @@
 from torch import nn
 import pytorch_lightning as pl
 from mmseg.registry import MODELS, init_default_scope
+from baseg.losses import SoftBCEWithLogitsLoss
 
 
 class MMSegModule(pl.Lightningmodule):
@@ -9,8 +10,8 @@ class MMSegModule(pl.Lightningmodule):
         init_default_scope(config.get("default_scope", "mmseg"))
         self.model = MODELS.build(config.model)
         self.model.cfg = config
-        self.criterion_decode = nn.BCEWithLogitsLoss()
-        self.criterion_auxiliary = nn.CrossEntropyLoss()
+        self.criterion_decode = SoftBCEWithLogitsLoss(ignore_index=255)
+        self.criterion_auxiliary = nn.CrossEntropyLoss(ignore_index=255)
 
     def forward(self, X):
         return self.model(X)
