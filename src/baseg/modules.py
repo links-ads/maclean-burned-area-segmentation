@@ -25,8 +25,7 @@ class MMSegModule(pl.Lightningmodule):
         loss_auxiliary = self.criterion_auxiliary(auxiliary_out, y_lc)
         loss = loss_decode + loss_auxiliary
 
-        self.log("train_decode_loss", loss_decode, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log("train_auxiliary_loss", loss_auxiliary, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-
+        self.log("train_loss_del", loss_decode, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("train_loss_aux", loss_auxiliary, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("train_loss_tot", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         return loss
