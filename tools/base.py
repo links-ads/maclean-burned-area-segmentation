@@ -4,7 +4,7 @@ from baseg.modules import MMSegModule
 from baseg.utils import get_experiment_name
 from mmengine import Config
 from argdantic import ArgParser, ArgField
-from pytorch_lightning import Trainer
+from pytorch_lightning import Trainer, seed_everything
 from lightning.pytorch.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 import baseg.models 
@@ -14,6 +14,7 @@ cli = ArgParser()
 
 @cli.command()
 def train(cfg_path: Path = ArgField("-c", description="Path to the config file.")):
+    seed_everything(42, workers=True)
     config = Config.fromfile(cfg_path)
     assert "name" in config, "Experiment name not specified in config."
     exp_name = get_experiment_name(config["name"])
