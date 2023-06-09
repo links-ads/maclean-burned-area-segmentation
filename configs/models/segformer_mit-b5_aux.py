@@ -1,12 +1,12 @@
 # model settings
 norm_cfg = dict(type="SyncBN", requires_grad=True)
 model = dict(
-    type="EncoderDecoder",
+    type="CustomEncoderDecoder",
     data_preprocessor=None,
     pretrained=None,
     backbone=dict(
         type="MixVisionTransformer",
-        in_channels=3,
+        in_channels=12,
         embed_dims=32,
         num_stages=4,
         num_layers=[2, 2, 2, 2],
@@ -37,7 +37,7 @@ model = dict(
         in_index=[0, 1, 2, 3],
         channels=256,
         dropout_ratio=0.1,
-        num_classes=19,  # TODO
+        num_classes=11,  
         norm_cfg=dict(type="SyncBN", requires_grad=True),
         align_corners=False,
         loss_decode=dict(type="CrossEntropyLoss", use_sigmoid=False, loss_weight=1.0),

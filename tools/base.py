@@ -7,7 +7,7 @@ from argdantic import ArgParser, ArgField
 from pytorch_lightning import Trainer
 from lightning.pytorch.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
-
+import baseg.models 
 
 cli = ArgParser()
 
@@ -31,7 +31,9 @@ def train(cfg_path: Path = ArgField("-c", description="Path to the config file."
     # prepare the model
     module = MMSegModule(config["model"])
     logger = TensorBoardLogger(save_dir="outputs", name=exp_name)
-    config.dump(Path(logger.log_dir) / "config.py")
+    config_dir = Path(logger.log_dir)
+    config_dir.mkdir(parents=True, exist_ok=True)
+    config.dump(config_dir / "config.py")
     callbacks = [
         ModelCheckpoint(
             dirpath=Path(logger.log_dir) / "weights",
@@ -47,7 +49,7 @@ def train(cfg_path: Path = ArgField("-c", description="Path to the config file."
         accelerator=config["trainer"]["accelerator"],
         devices=config["trainer"]["devices"],
         strategy=config["trainer"]["strategy"],
-        max_epochs=config["trainer"]["epochs"],
+        max_epochs=config["trainer"]["max_epochs"],
         precision=config["trainer"]["precision"],
         callbacks=callbacks,
         logger=logger,

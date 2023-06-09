@@ -4,27 +4,9 @@ from mmseg.models.segmentors.encoder_decoder import EncoderDecoder
 from mmseg.utils import (ConfigType, OptConfigType, OptMultiConfig,
                          OptSampleList)
 from mmseg.registry import MODELS
-
+from torch.nn import functional as F    
 @MODELS.register_module()
 class CustomEncoderDecoder(EncoderDecoder):
-    def __init__(self, backbone: ConfigType,
-                 decode_head: ConfigType,
-                 neck: OptConfigType = None,
-                 auxiliary_head: OptConfigType = None,
-                 train_cfg: OptConfigType = None,
-                 test_cfg: OptConfigType = None,
-                 data_preprocessor: OptConfigType = None,
-                 pretrained: Optional[str] = None,
-                 init_cfg: OptMultiConfig = None):
-        super().__init__(backbone,
-                 decode_head,
-                 neck,
-                 auxiliary_head,
-                 train_cfg,
-                 test_cfg,
-                 data_preprocessor,
-                 pretrained,
-                 init_cfg)
 
     def _forward(self,
                  inputs: Tensor,
@@ -42,7 +24,9 @@ class CustomEncoderDecoder(EncoderDecoder):
         """
         x = self.extract_feat(inputs)
         x_h1 = self.decode_head.forward(x)
+        x_h1 = F.interpolate(x_h1, size=inputs.shape[2:], mode="bilinear", align_corners=True)
         if self.auxiliary_head is not None:
             x_h2 = self.auxiliary_head.forward(x)
+            x_h2 = F.interpolate(x_h2, size=inputs.shape[2:], mode="bilinear", align_corners=True)
             return x_h1, x_h2
         return x_h1
