@@ -161,7 +161,14 @@ class EMSImageDataset(Dataset):
 
     def _preprocess(self, sample: dict) -> dict:
         sample["image"] = np.clip(sample.pop("S2L2A").transpose(1, 2, 0), 0, 1)
-        sample["mask"] = sample.pop("DEL")
+        mask = sample.pop("DEL")
+        # if we have a cloud mask, use it to ignore pixels in DEL and LC
+        if "CM" in sample:
+            cm = sample.pop("CM")
+            mask[cm == 1] = 255
+            if "ESA_LC" in sample:
+                sample["ESA_LC"][cm == 1] = 255
+        sample["mask"] = mask
         return sample
 
     def _postprocess(self, sample: dict) -> dict:

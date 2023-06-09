@@ -23,9 +23,9 @@ def train(cfg_path: Path = ArgField("-c", description="Path to the config file."
         root=config["data"]["root"],
         patch_size=config["data"]["patch_size"],
         modalities=config["data"]["modalities"],
-        batch_size_train=config["trainer"]["batch_size"],
-        batch_size_eval=config["trainer"]["batch_size"],
-        num_workers=config["trainer"]["num_workers"],
+        batch_size_train=config["data"]["batch_size"],
+        batch_size_eval=config["data"]["batch_size"],
+        num_workers=config["data"]["num_workers"],
     )
 
     # prepare the model

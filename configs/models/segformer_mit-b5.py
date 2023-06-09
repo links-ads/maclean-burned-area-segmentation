@@ -1,9 +1,8 @@
 # model settings
 norm_cfg = dict(type="SyncBN", requires_grad=True)
-data_preprocessor = None
 model = dict(
     type="EncoderDecoder",
-    data_preprocessor=data_preprocessor,
+    data_preprocessor=None,
     pretrained=None,
     backbone=dict(
         type="MixVisionTransformer",
