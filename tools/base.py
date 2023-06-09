@@ -6,7 +6,7 @@ from mmengine import Config
 from argdantic import ArgParser, ArgField
 from pytorch_lightning import Trainer
 from lightning.pytorch.loggers import TensorBoardLogger
-from lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import ModelCheckpoint
 
 
 cli = ArgParser()
