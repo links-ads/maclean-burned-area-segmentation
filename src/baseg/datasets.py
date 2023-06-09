@@ -184,7 +184,10 @@ class EMSImageDataset(Dataset):
         metadata = dict(idx=idx)
         for modality, modality_files in self.files.items():
             file_path = modality_files[idx]
-            sample[modality] = read_raster(file_path, bands=self.bands[modality]).astype(self.dtypes[modality])
+            sample[modality] = read_raster(
+                file_path,
+                bands=self.bands[modality],
+            ).astype(self.dtypes[modality])
             metadata[modality] = str(file_path)
         if self.transform:
             sample = self._postprocess(self.transform(**self._preprocess(sample)))
@@ -203,7 +206,7 @@ class EMSCropDataset(EMSImageDataset):
                 file_path,
                 bands=self.bands[modality],
                 window=Window(*coords),
-            )
+            ).astype(self.dtypes[modality])
             metadata[modality] = str(file_path)
         if self.transform:
             sample = self._postprocess(self.transform(**self._preprocess(sample)))
