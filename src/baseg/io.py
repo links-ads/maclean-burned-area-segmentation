@@ -23,10 +23,12 @@ def read_raster(
     with rio.open(path) as dataset:
         options = {}
         if window is not None:
-            options.update(window=window, boundless=True)
+            fill_value = 0 if bands is None else 255
+            options.update(window=window, boundless=True, fill_value=fill_value)
         if bands is not None:
-            options.update(bands=bands)
-        data = dataset.read(**options)
+            data = dataset.read(bands, **options)
+        else:
+            data = dataset.read(**options)
         if return_profile:
             return data, dataset.profile
         return data

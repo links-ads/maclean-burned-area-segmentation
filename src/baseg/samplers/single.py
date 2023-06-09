@@ -1,4 +1,3 @@
-import warnings
 from abc import ABC
 
 import numpy as np
@@ -31,7 +30,6 @@ class TiledSampler(Sampler, ABC):
         self,
         dataset: Dataset,
         tile_size: int,
-        stride: int = None,
         length: int = None,
     ):
         assert hasattr(
@@ -40,32 +38,32 @@ class TiledSampler(Sampler, ABC):
         self.dataset = dataset
         self.shapes = dataset.image_shapes()
         self.tile_size = tile_size
-        self.stride = stride or tile_size
         self.length = length
+
+    def __len__(self):
+        if self.length:
+            return self.length
+        total = 0
+        for w, h in self.shapes:
+            num_horizontal = w // self.tile_size + int(w % self.tile_size != 0)
+            num_vertical = h // self.tile_size + int(h % self.tile_size != 0)
+            total += num_horizontal * num_vertical
+        self.length = total
+        return total
 
 
 class SequentialTiledSampler(TiledSampler):
     def __iter__(self):
         for i, image_size in enumerate(self.shapes):
             width, height = image_size
-            for x in range(0, width - self.tile_size + 1, self.stride):
-                for y in range(0, height - self.tile_size + 1, self.stride):
-                    maxx, maxy = x + self.tile_size, y + self.tile_size
-                    if maxx > width or maxy > height:
-                        warnings.warn(
-                            f"Tile at ({x}, {y}) is out of bounds for image {i}, you may want to pad the image."
-                        )
-                        continue
-                    yield IndexedBounds(i, (x, y, maxx, maxy))
+            num_horizontal = width // self.tile_size + int(width % self.tile_size != 0)
+            num_vertical = height // self.tile_size + int(height % self.tile_size != 0)
 
-    def __len__(self):
-        # count the tiles generated
-        if self.length:
-            return self.length
-        return sum(
-            (width - self.tile_size + 1) * (height - self.tile_size + 1) // (self.stride**2)
-            for width, height in self.shapes
-        )
+            for j in range(num_horizontal):
+                for k in range(num_vertical):
+                    x = j * self.tile_size
+                    y = k * self.tile_size
+                    yield IndexedBounds(i, (x, y, self.tile_size, self.tile_size))
 
 
 class RandomTiledSampler(TiledSampler):
