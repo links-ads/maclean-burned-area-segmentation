@@ -1,15 +1,17 @@
 from pathlib import Path
+from mmengine import Config
 from argdantic import ArgParser, ArgField
 
-
-cli = ArgParser(name="baseline", description="Baseline training and evaluation script", force_group=True)
+cli = ArgParser()
 
 
 @cli.command()
 def train(
-    root: Path = ArgField(help="Root directory"),
+    cfg_path: Path = ArgField("-c", description="Path to the config file."),
+    accelerator: str = ArgField("-a", default="gpu", description="Accelerator to use (see lightning)."),
 ):
-    print("Training on root directory", root)
+    config = Config.fromfile(cfg_path)
+    print(config)
 
 
 if __name__ == "__main__":
