@@ -3,7 +3,7 @@ from mmengine import Config
 from mmengine.registry import init_default_scope
 from mmseg.registry import MODELS
 from mmseg.models import EncoderDecoder
-from custom_encoder_decoder import CustomEncoderDecoder
+from baseg.models.custom_encoder_decoder import CustomEncoderDecoder
 import torch
 from torch import nn
 
@@ -25,7 +25,7 @@ def build_model(config: dict, device: str = "cpu", override: dict = None):
     return model
 
 
-config_file = "segformer_cfg.py"
+config_file = "configs/segformer_cfg.py"
 
 # test a single image and show the results
 img = "demo.png"  # or img = mmcv.imread(img), which will only load it once

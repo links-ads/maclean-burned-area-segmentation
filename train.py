@@ -4,7 +4,7 @@ import pytorch_lightning as pl
 import torch 
 import datetime
 from lightning.pytorch.loggers import TensorBoardLogger
-from model import SegFormerLightning    
+from baseg.modelmodules import SegFormerLightning    
 
 
 pl.seed_everything(42, workers=True)
@@ -14,6 +14,10 @@ parser = ArgumentParser()
 parser.add_argument(
     "--dataset_path", help="""Path to data folder.""", type=Path
 )
+parser.add_argument(
+    "--config", help="""Path to config file folder.""", type=Path, default=Path("configs/segformer_with_.aux_cfg.py")
+)
+
 parser.add_argument(
     "-s", "--save_path", help="""Path to save model trained model checkpoint."""
 )
@@ -32,25 +36,25 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-config = dict(model=dict(type='CustomEncoderDecoder',
-                   backbone=dict(in_channels=12),
-                   decode_head=dict(type='SegformerHead', 
-                                    num_classes= 1, #TODO
-                                    loss_decode= dict(type='CrossEntropyLoss', use_sigmoid=True, loss_weight= 1.0)), #use_sigmoid = True makes it a BCE loss
-                   auxiliary_head=dict(type='SegformerHead', 
-                                    in_channels= [32, 64, 160, 256],
-                                    in_index= [0, 1, 2, 3],
-                                    channels= 256,
-                                    dropout_ratio= 0.1,
-                                    num_classes= 19,  #TODO
-                                    norm_cfg= dict(type= 'SyncBN', requires_grad= True),
-                                    align_corners= False,
-                                    loss_decode= dict(type='CrossEntropyLoss', use_sigmoid=False, loss_weight= 1.0)) # class weights..?
-                )
-        )
+# config = dict(model=dict(type='CustomEncoderDecoder',
+#                    backbone=dict(in_channels=12),
+#                    decode_head=dict(type='SegformerHead', 
+#                                     num_classes= 1, #TODO
+#                                     loss_decode= dict(type='CrossEntropyLoss', use_sigmoid=True, loss_weight= 1.0)), #use_sigmoid = True makes it a BCE loss
+#                    auxiliary_head=dict(type='SegformerHead', 
+#                                     in_channels= [32, 64, 160, 256],
+#                                     in_index= [0, 1, 2, 3],
+#                                     channels= 256,
+#                                     dropout_ratio= 0.1,
+#                                     num_classes= 19,  #TODO
+#                                     norm_cfg= dict(type= 'SyncBN', requires_grad= True),
+#                                     align_corners= False,
+#                                     loss_decode= dict(type='CrossEntropyLoss', use_sigmoid=False, loss_weight= 1.0)) # class weights..?
+#                 )
+#         )
 
 
-model = SegFormerLightning(config_override=config)
+model = SegFormerLightning(config_file=args.config, config_override=config)
 
 # data = TODO
 

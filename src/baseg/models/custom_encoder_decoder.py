@@ -2,7 +2,7 @@ from typing import Optional
 from torch import Tensor
 from mmseg.models.segmentors.encoder_decoder import EncoderDecoder
 from mmseg.utils import (ConfigType, OptConfigType, OptMultiConfig,
-                         OptSampleList, SampleList, add_prefix)
+                         OptSampleList)
 from mmseg.registry import MODELS
 
 @MODELS.register_module()
