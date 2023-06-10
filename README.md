@@ -33,3 +33,21 @@ This can also be achieved by symlinking the dataset to this location:
 ```console
 $ ln -s <absolute_path_to_data> data/ems
 ```
+
+## Experiments
+
+
+### Training
+
+```console
+$ python tools/base.py train -c <config_path>
+```
+
+### Testing and Inference
+
+```console
+$ python tools/base.py test -e <experiment_path> [-c <checkpoint_path>]
+$ python tools/base.py test -e <experiment_path> [-c <checkpoint_path>] --predict
+```
+
+
