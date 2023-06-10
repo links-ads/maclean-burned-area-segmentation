@@ -43,7 +43,7 @@ def train(cfg_path: Path = ArgField("-c", description="Path to the config file."
             dirpath=Path(logger.log_dir) / "weights",
             monitor="epoch",
             mode="max",
-            filename="model-ep-{epoch:02d}_val-loss-{val_loss:.2f}",
+            filename="model-{epoch:02d}-{val_loss:.2f}",
             save_top_k=3,
             every_n_epochs=5,
             save_last=True,
