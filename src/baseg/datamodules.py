@@ -62,8 +62,15 @@ class EMSDataModule(LightningDataModule):
                 modalities=self.modalities,
                 transform=self.eval_transform,
             )
-        elif stage == "test" or stage is None:
-            self.test_set = EMSImageDataset(
+        elif stage == "test":
+            self.test_set = EMSCropDataset(
+                root=self.root,
+                subset="test",
+                modalities=self.modalities,
+                transform=self.eval_transform,
+            )
+        elif stage == "predict":
+            self.pred_set = EMSImageDataset(
                 root=self.root,
                 subset="test",
                 modalities=self.modalities,
@@ -97,6 +104,19 @@ class EMSDataModule(LightningDataModule):
     def test_dataloader(self):
         return DataLoader(
             self.test_set,
+            sampler=SequentialTiledSampler(
+                self.test_set,
+                tile_size=self.patch_size,
+            ),
+            batch_size=self.batch_size_eval,
+            num_workers=self.num_workers,
+            pin_memory=True,
+        )
+
+    def predict_dataloader(self):
+        return DataLoader(
+            self.pred_set,
+            shuffle=False,
             batch_size=1,
             num_workers=self.num_workers,
             pin_memory=True,
