@@ -4,8 +4,8 @@ model = dict(
     backbone=dict(embed_dims=64, num_layers=[3, 6, 40, 3]),
     decode_head=dict(in_channels=[64, 128, 320, 512]),
     auxiliary_head=dict(
-        type="SegformerHead",
-        in_channels=[32, 64, 160, 256],
+        type="CustomSegformerHead",
+        in_channels=[64, 128, 320, 512],
         in_index=[0, 1, 2, 3],
         channels=256,
         dropout_ratio=0.1,

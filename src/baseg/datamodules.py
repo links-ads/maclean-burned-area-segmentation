@@ -1,10 +1,11 @@
+from pathlib import Path
+
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-from pathlib import Path
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader
 
-from baseg.datasets import EMSImageDataset, EMSCropDataset
+from baseg.datasets import EMSCropDataset, EMSImageDataset
 from baseg.samplers import RandomTiledBatchSampler, SequentialTiledSampler
 
 
@@ -38,7 +39,8 @@ class EMSDataModule(LightningDataModule):
                 A.HorizontalFlip(p=0.5),
                 A.VerticalFlip(p=0.5),
                 A.RandomRotate90(p=0.5),
-                A.RandomBrightnessContrast(p=0.5, brightness_limit=0.1, contrast_limit=0.1),
+                A.ShiftScaleRotate(rotate_limit=360, value=0, mask_value=255, p=0.5),
+                A.RandomBrightnessContrast(p=0.5, brightness_limit=0.05, contrast_limit=0.05),
                 ToTensorV2(),
             ],
             additional_targets=self.transform_targets,

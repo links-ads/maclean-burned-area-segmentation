@@ -54,9 +54,8 @@ def train(
             monitor="epoch",
             mode="max",
             filename="model-{epoch:02d}-{val_loss:.2f}",
-            save_top_k=3,
-            every_n_epochs=5,
-            save_last=True,
+            save_top_k=8,
+            every_n_epochs=10,
         )
     ]
     trainer = Trainer(**config["trainer"], callbacks=callbacks, logger=logger)

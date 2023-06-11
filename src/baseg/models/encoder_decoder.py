@@ -1,7 +1,7 @@
-from torch import Tensor
 from mmseg.models.segmentors.encoder_decoder import EncoderDecoder
-from mmseg.utils import OptSampleList
 from mmseg.registry import MODELS
+from mmseg.utils import OptSampleList
+from torch import Tensor
 from torch.nn import functional as F
 
 
@@ -20,10 +20,10 @@ class CustomEncoderDecoder(EncoderDecoder):
             Tensor: Forward output of model without any post-processes.
         """
         x = self.extract_feat(inputs)
-        x_h1 = self.decode_head.forward(x)
+        x_h1 = self.decode_head(x)
         x_h1 = F.interpolate(x_h1, size=inputs.shape[2:], mode="bilinear", align_corners=True)
         if self.auxiliary_head is not None:
-            x_h2 = self.auxiliary_head.forward(x)
+            x_h2 = self.auxiliary_head(x)
             x_h2 = F.interpolate(x_h2, size=inputs.shape[2:], mode="bilinear", align_corners=True)
             return x_h1, x_h2
         return x_h1

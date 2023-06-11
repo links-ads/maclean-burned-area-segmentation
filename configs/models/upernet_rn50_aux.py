@@ -1,11 +1,11 @@
 # model settings
 norm_cfg = dict(type="SyncBN", requires_grad=True)
 model = dict(
-    type="EncoderDecoder",
+    type="CustomEncoderDecoder",
     data_preprocessor=None,
-    pretrained=None,
+    # pretrained="pretrained/resnet50-19c8e357.pth",
     backbone=dict(
-        type="ResNetV1c",
+        type="ResNet",
         depth=50,
         in_channels=12,
         num_stages=4,
@@ -18,7 +18,7 @@ model = dict(
         contract_dilation=True,
     ),
     decode_head=dict(
-        type="UPerHead",
+        type="CustomUPerHead",
         in_channels=[256, 512, 1024, 2048],
         in_index=[0, 1, 2, 3],
         pool_scales=(1, 2, 3, 6),
@@ -29,7 +29,7 @@ model = dict(
         align_corners=False,
     ),
     auxiliary_head=dict(
-        type="FCNHead",
+        type="CustomFCNHead",
         in_channels=1024,
         in_index=2,
         channels=256,
@@ -41,5 +41,5 @@ model = dict(
         align_corners=False,
     ),
     train_cfg=dict(),
-    test_cfg=dict(),
+    test_cfg=dict(mode="whole"),
 )

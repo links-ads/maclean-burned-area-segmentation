@@ -1,11 +1,11 @@
 _base_ = [
-    "./models/segformer_mit-b0_aux.py",
+    "./models/upernet_rn50_aux.py",
     "./datasets/ems.py",
 ]
-name = "baseline"
+name = "_debug"
 trainer = dict(
     max_epochs=100,
     accelerator="cpu",
     strategy=None,
-    devices=None,
+    devices=1,
 )
