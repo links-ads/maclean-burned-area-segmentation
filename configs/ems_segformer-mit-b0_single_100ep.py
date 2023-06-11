@@ -1,5 +1,5 @@
 _base_ = [
-    "./models/segformer_mit-b5_aux.py",
+    "./models/segformer_mit-b0.py",
     "./datasets/ems.py",
 ]
 name = "baseline"

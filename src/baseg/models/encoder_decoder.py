@@ -1,16 +1,13 @@
-from typing import Optional
 from torch import Tensor
 from mmseg.models.segmentors.encoder_decoder import EncoderDecoder
-from mmseg.utils import (ConfigType, OptConfigType, OptMultiConfig,
-                         OptSampleList)
+from mmseg.utils import OptSampleList
 from mmseg.registry import MODELS
-from torch.nn import functional as F    
+from torch.nn import functional as F
+
+
 @MODELS.register_module()
 class CustomEncoderDecoder(EncoderDecoder):
-
-    def _forward(self,
-                 inputs: Tensor,
-                 data_samples: OptSampleList = None) -> Tensor:
+    def _forward(self, inputs: Tensor, data_samples: OptSampleList = None) -> Tensor:
         """Network forward process.
 
         Args:

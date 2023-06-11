@@ -1,28 +1,42 @@
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
-from mmseg.registry import MODELS
-from pytorch_lightning import LightningModule
-from torch import nn
 import torch
-from torch.optim import AdamW
+from torch import nn
+from torchmetrics import F1Score, JaccardIndex
 
 from baseg.losses import SoftBCEWithLogitsLoss
+from baseg.modules.base import BaseModule
 
 
-class MMSegModule(LightningModule):
+class MultiTaskModule(BaseModule):
     def __init__(
         self,
         config: dict,
-        tiler: Optional[Callable] = None,
-        predict_callback: Optional[Callable] = None,
+        tiler: Callable[..., Any] | None = None,
+        predict_callback: Callable[..., Any] | None = None,
     ):
-        super().__init__()
-        self.model = MODELS.build(config)
-        self.model.cfg = config
+        super().__init__(config, tiler, predict_callback)
         self.criterion_decode = SoftBCEWithLogitsLoss(ignore_index=255)
         self.criterion_auxiliary = nn.CrossEntropyLoss(ignore_index=255)
-        self.tiler = tiler
-        self.predict_callback = predict_callback
+        num_classes = config["auxiliary_head"]["num_classes"]
+        self.train_metrics_aux = nn.ModuleDict(
+            {
+                "train_f1_aux": F1Score(task="multiclass", ignore_index=255, num_classes=num_classes),
+                "train_iou_aux": JaccardIndex(task="multiclass", ignore_index=255, num_classes=num_classes),
+            }
+        )
+        self.val_metrics_aux = nn.ModuleDict(
+            {
+                "val_f1_aux": F1Score(task="multiclass", ignore_index=255, num_classes=num_classes),
+                "val_iou_aux": JaccardIndex(task="multiclass", ignore_index=255, num_classes=num_classes),
+            }
+        )
+        self.test_metrics_aux = nn.ModuleDict(
+            {
+                "test_f1_aux": F1Score(task="multiclass", ignore_index=255, num_classes=num_classes),
+                "test_iou_aux": JaccardIndex(task="multiclass", ignore_index=255, num_classes=num_classes),
+            }
+        )
 
     def training_step(self, batch: Any, batch_idx: int):
         x = batch["S2L2A"]
@@ -36,10 +50,15 @@ class MMSegModule(LightningModule):
         self.log("train_loss_del", loss_decode, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log("train_loss_aux", loss_auxiliary, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        # compute delineation metrics
+        for metric_name, metric in self.train_metrics.items():
+            metric(decode_out.squeeze(1), y_del.float())
+            self.log(metric_name, metric, on_epoch=True, prog_bar=True)
+        # compute auxiliary metrics
+        for metric_name, metric in self.train_metrics_aux.items():
+            metric(auxiliary_out, y_lc.long())
+            self.log(metric_name, metric, on_epoch=True, prog_bar=True)
         return loss
-
-    def configure_optimizers(self) -> Any:
-        return AdamW(self.parameters(), lr=1e-4, weight_decay=1e-4)
 
     def validation_step(self, batch: Any, batch_idx: int):
         x = batch["S2L2A"]
@@ -53,6 +72,14 @@ class MMSegModule(LightningModule):
         self.log("val_loss_del", loss_decode, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log("val_loss_aux", loss_auxiliary, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log("val_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        # compute delineation metrics
+        for metric_name, metric in self.val_metrics.items():
+            metric(decode_out.squeeze(1), y_del.float())
+            self.log(metric_name, metric, on_epoch=True, prog_bar=True)
+        # compute auxiliary metrics
+        for metric_name, metric in self.val_metrics_aux.items():
+            metric(auxiliary_out, y_lc.long())
+            self.log(metric_name, metric, on_epoch=True, prog_bar=True)
         return loss
 
     def test_step(self, batch: Any, batch_idx: int):
@@ -67,6 +94,14 @@ class MMSegModule(LightningModule):
         self.log("test_loss_del", loss_decode, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log("test_loss_aux", loss_auxiliary, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log("test_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        # compute delineation metrics
+        for metric_name, metric in self.test_metrics.items():
+            metric(decode_out.squeeze(1), y_del.float())
+            self.log(metric_name, metric, on_epoch=True, prog_bar=True)
+        # compute auxiliary metrics
+        for metric_name, metric in self.test_metrics_aux.items():
+            metric(auxiliary_out, y_lc.long())
+            self.log(metric_name, metric, on_epoch=True, prog_bar=True)
         return loss
 
     def predict_step(self, batch: Any, batch_idx: int, dataloader_idx: int = 0) -> Any:

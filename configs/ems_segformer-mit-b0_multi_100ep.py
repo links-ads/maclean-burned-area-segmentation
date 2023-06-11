@@ -5,7 +5,8 @@ _base_ = [
 name = "baseline"
 trainer = dict(
     max_epochs=100,
-    accelerator="cpu",
+    precision=16,
+    accelerator="gpu",
     strategy=None,
-    devices=None,
+    devices=1,
 )
