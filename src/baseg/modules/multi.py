@@ -21,20 +21,26 @@ class MultiTaskModule(BaseModule):
         num_classes = config["auxiliary_head"]["num_classes"]
         self.train_metrics_aux = nn.ModuleDict(
             {
-                "train_f1_aux": F1Score(task="multiclass", ignore_index=255, num_classes=num_classes),
-                "train_iou_aux": JaccardIndex(task="multiclass", ignore_index=255, num_classes=num_classes),
+                "train_f1_aux": F1Score(task="multiclass", ignore_index=255, num_classes=num_classes, average="macro"),
+                "train_iou_aux": JaccardIndex(
+                    task="multiclass", ignore_index=255, num_classes=num_classes, average="macro"
+                ),
             }
         )
         self.val_metrics_aux = nn.ModuleDict(
             {
-                "val_f1_aux": F1Score(task="multiclass", ignore_index=255, num_classes=num_classes),
-                "val_iou_aux": JaccardIndex(task="multiclass", ignore_index=255, num_classes=num_classes),
+                "val_f1_aux": F1Score(task="multiclass", ignore_index=255, num_classes=num_classes, average="macro"),
+                "val_iou_aux": JaccardIndex(
+                    task="multiclass", ignore_index=255, num_classes=num_classes, average="macro"
+                ),
             }
         )
         self.test_metrics_aux = nn.ModuleDict(
             {
-                "test_f1_aux": F1Score(task="multiclass", ignore_index=255, num_classes=num_classes),
-                "test_iou_aux": JaccardIndex(task="multiclass", ignore_index=255, num_classes=num_classes),
+                "test_f1_aux": F1Score(task="multiclass", ignore_index=255, num_classes=num_classes, average="macro"),
+                "test_iou_aux": JaccardIndex(
+                    task="multiclass", ignore_index=255, num_classes=num_classes, average="macro"
+                ),
             }
         )
 

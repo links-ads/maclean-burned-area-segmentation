@@ -1,8 +1,8 @@
-import logging
 from functools import partial
 from pathlib import Path
 
 from argdantic import ArgField, ArgParser
+from loguru import logger as log
 from mmengine import Config
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -15,7 +15,6 @@ from baseg.tiling import SmoothTiler
 from baseg.utils import exp_name_timestamp, find_best_checkpoint
 
 cli = ArgParser()
-log = logging.getLogger("lightning")
 
 
 @cli.command()
@@ -96,7 +95,7 @@ def test(
     if predict:
         tiler = SmoothTiler(
             tile_size=config["data"]["patch_size"],
-            batch_size=config["data"]["batch_size"],
+            batch_size=config["data"]["batch_size_eval"],
             channels_first=True,
             mirrored=False,
         )
@@ -107,9 +106,8 @@ def test(
 
     # prepare the model
     log.info("Preparing the model...")
-    model_config = config["model"]
-    module_class = MultiTaskModule if "auxiliary_head" in model_config else SingleTaskModule
-    module = module_class(model_config, **module_opts)
+    module_class = MultiTaskModule if "auxiliary_head" in config["model"] else SingleTaskModule
+    module = module_class(**module_opts)
 
     logger = TensorBoardLogger(save_dir="outputs", name=config["name"], version=exp_path.stem)
     # load the best checkpoint automatically

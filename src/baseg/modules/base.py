@@ -22,20 +22,20 @@ class BaseModule(LightningModule):
         self.predict_callback = predict_callback
         self.train_metrics = nn.ModuleDict(
             {
-                "train_f1": F1Score(task="binary", ignore_index=255),
-                "train_iou": JaccardIndex(task="binary", ignore_index=255),
+                "train_f1": F1Score(task="binary", ignore_index=255, average="macro"),
+                "train_iou": JaccardIndex(task="binary", ignore_index=255, average="macro"),
             }
         )
         self.val_metrics = nn.ModuleDict(
             {
-                "val_f1": F1Score(task="binary", ignore_index=255),
-                "val_iou": JaccardIndex(task="binary", ignore_index=255),
+                "val_f1": F1Score(task="binary", ignore_index=255, average="macro"),
+                "val_iou": JaccardIndex(task="binary", ignore_index=255, average="macro"),
             }
         )
         self.test_metrics = nn.ModuleDict(
             {
-                "test_f1": F1Score(task="binary", ignore_index=255),
-                "test_iou": JaccardIndex(task="binary", ignore_index=255),
+                "test_f1": F1Score(task="binary", ignore_index=255, average="macro"),
+                "test_iou": JaccardIndex(task="binary", ignore_index=255, average="macro"),
             }
         )
 
