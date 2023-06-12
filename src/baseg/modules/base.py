@@ -4,7 +4,7 @@ from pytorch_lightning import LightningModule
 from torch import nn
 from torch.optim import AdamW
 from torchmetrics import F1Score, JaccardIndex
-
+import torch
 from baseg.models import build_model
 
 
@@ -17,6 +17,10 @@ class BaseModule(LightningModule):
     ):
         super().__init__()
         self.model = build_model(config)
+        if "pretrained" in config:
+            self.model.backbone.load_state_dict(torch.load(config.pretrained))
+        elif "pretrained" in config.backbone:
+            self.model.backbone.load_state_dict(torch.load(config.backbone.pretrained))
         self.model.cfg = config
         self.tiler = tiler
         self.predict_callback = predict_callback
