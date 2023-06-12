@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torchmetrics import F1Score, JaccardIndex
 
-from baseg.losses import SoftBCEWithLogitsLoss
+from baseg.losses import SoftBCEWithLogitsLoss, DiceLoss
 from baseg.modules.base import BaseModule
 
 
@@ -14,9 +14,13 @@ class MultiTaskModule(BaseModule):
         config: dict,
         tiler: Callable[..., Any] | None = None,
         predict_callback: Callable[..., Any] | None = None,
+        loss: str = "bce",
     ):
         super().__init__(config, tiler, predict_callback)
-        self.criterion_decode = SoftBCEWithLogitsLoss(ignore_index=255)
+        if loss == "bce":
+            self.criterion_decode = SoftBCEWithLogitsLoss(ignore_index=255)
+        else:
+            self.criterion_decode = DiceLoss(mode="binary", from_logits=True, ignore_index=255)
         self.criterion_auxiliary = nn.CrossEntropyLoss(ignore_index=255)
         num_classes = config["auxiliary_head"]["num_classes"]
         self.train_metrics_aux = nn.ModuleDict(

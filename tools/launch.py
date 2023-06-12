@@ -39,8 +39,9 @@ def train(
     # prepare the model
     log.info("Preparing the model...")
     model_config = config["model"]
+    loss = config["loss"] if "loss" in config else "bce"
     module_class = MultiTaskModule if "auxiliary_head" in model_config else SingleTaskModule
-    module = module_class(model_config)
+    module = module_class(model_config, loss=loss)
 
     log.info("Preparing the trainer...")
     logger = TensorBoardLogger(save_dir="outputs", name=exp_name)
@@ -140,5 +141,5 @@ def process_inference(
 
 
 if __name__ == "__main__":
-    seed_everything(42, workers=True)
+    seed_everything(57, workers=True)
     cli()
