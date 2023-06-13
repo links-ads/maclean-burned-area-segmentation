@@ -15,3 +15,9 @@ data = dict(
     batch_size_eval=32,
     num_workers=4,
 )
+evaluation = dict(
+    precision=16,
+    accelerator="gpu",
+    strategy=None,
+    devices=1,
+)

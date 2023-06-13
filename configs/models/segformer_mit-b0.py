@@ -3,7 +3,6 @@ norm_cfg = dict(type="SyncBN", requires_grad=True)
 model = dict(
     type="CustomEncoderDecoder",
     data_preprocessor=None,
-    pretrained=None,
     backbone=dict(
         type="MixVisionTransformer",
         in_channels=12,

@@ -42,6 +42,7 @@ def train(
     loss = config["loss"] if "loss" in config else "bce"
     module_class = MultiTaskModule if "auxiliary_head" in model_config else SingleTaskModule
     module = module_class(model_config, loss=loss)
+    module.init_pretrained()
 
     log.info("Preparing the trainer...")
     logger = TensorBoardLogger(save_dir="outputs", name=exp_name)
@@ -54,8 +55,8 @@ def train(
             monitor="epoch",
             mode="max",
             filename="model-{epoch:02d}-{val_loss:.2f}",
-            save_top_k=8,
-            every_n_epochs=10,
+            save_top_k=10,
+            every_n_epochs=5,
         )
     ]
     trainer = Trainer(**config["trainer"], callbacks=callbacks, logger=logger)
@@ -90,7 +91,7 @@ def test(
 
     # prepare the model
     checkpoint = checkpoint or find_best_checkpoint(models_path, "val_loss", "min")
-    log.info(f"Loading checkpoint: {checkpoint}")
+    log.info(f"Using checkpoint: {checkpoint}")
 
     module_opts = dict(config=config["model"])
     if predict:
@@ -108,12 +109,9 @@ def test(
     # prepare the model
     log.info("Preparing the model...")
     module_class = MultiTaskModule if "auxiliary_head" in config["model"] else SingleTaskModule
-    module = module_class(**module_opts)
+    module = module_class.load_from_checkpoint(checkpoint, **module_opts)
 
     logger = TensorBoardLogger(save_dir="outputs", name=config["name"], version=exp_path.stem)
-    # load the best checkpoint automatically
-    module = module.load_from_checkpoint(checkpoint, **module_opts)
-
     if predict:
         log.info("Generating predictions...")
         trainer = Trainer(**config["evaluation"], logger=False)

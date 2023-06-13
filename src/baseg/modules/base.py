@@ -1,10 +1,12 @@
+import warnings
 from typing import Any, Callable, Optional
 
+import torch
 from pytorch_lightning import LightningModule
 from torch import nn
 from torch.optim import AdamW
 from torchmetrics import F1Score, JaccardIndex
-import torch
+
 from baseg.models import build_model
 
 
@@ -17,10 +19,6 @@ class BaseModule(LightningModule):
     ):
         super().__init__()
         self.model = build_model(config)
-        if "pretrained" in config:
-            self.model.backbone.load_state_dict(torch.load(config.pretrained))
-        elif "pretrained" in config.backbone:
-            self.model.backbone.load_state_dict(torch.load(config.backbone.pretrained))
         self.model.cfg = config
         self.tiler = tiler
         self.predict_callback = predict_callback
@@ -42,6 +40,14 @@ class BaseModule(LightningModule):
                 "test_iou": JaccardIndex(task="binary", ignore_index=255, average="macro"),
             }
         )
+
+    def init_pretrained(self) -> None:
+        assert self.model.cfg, "Model config is not set"
+        config = self.model.cfg.backbone
+        if "pretrained" not in config or config.pretrained is None:
+            warnings.warn("No pretrained weights are specified")
+            return
+        self.model.backbone.load_state_dict(torch.load(config.pretrained))
 
     def configure_optimizers(self) -> Any:
         return AdamW(self.parameters(), lr=1e-4, weight_decay=1e-4)

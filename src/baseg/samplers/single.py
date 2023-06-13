@@ -71,20 +71,10 @@ class RandomTiledSampler(TiledSampler):
         self,
         dataset: Dataset,
         tile_size: int,
-        stride: int = None,
-        apply_pad: bool = False,
         length: int = None,
     ):
-        super().__init__(dataset, tile_size, stride, apply_pad)
-        self.length = length or self.estimate_length()
-        self.indices = np.random.choice(len(self.dataset), self.length, replace=True)
-
-    def estimate_length(self) -> int:
-        # compute the number of tiles in each image and sum them up
-        return sum(
-            (width - self.tile_size + 1) * (height - self.tile_size + 1) // (self.stride**2)
-            for width, height in self.shapes
-        )
+        super().__init__(dataset, tile_size, length=length)
+        self.indices = np.random.choice(len(self.dataset), len(self), replace=True)
 
     def __iter__(self):
         # sample a random image, then sample a random tile from that image
