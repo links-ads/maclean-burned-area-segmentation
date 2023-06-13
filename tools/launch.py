@@ -112,6 +112,7 @@ def test(
 
     logger = TensorBoardLogger(save_dir="outputs", name=config["name"], version=exp_path.stem)
     # load the best checkpoint automatically
+    module = module.load_from_checkpoint(checkpoint, **module_opts)
 
     if predict:
         log.info("Generating predictions...")
