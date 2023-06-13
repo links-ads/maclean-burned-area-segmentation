@@ -47,7 +47,7 @@ class BaseModule(LightningModule):
         if "pretrained" not in config or config.pretrained is None:
             warnings.warn("No pretrained weights are specified")
             return
-        self.model.backbone.load_state_dict(torch.load(config.pretrained))
+        self.model.backbone.load_state_dict(torch.load(config.pretrained), strict=False)   
 
     def configure_optimizers(self) -> Any:
         return AdamW(self.parameters(), lr=1e-4, weight_decay=1e-4)
