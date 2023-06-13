@@ -6,7 +6,8 @@ from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader
 
 from baseg.datasets import EMSCropDataset, EMSImageDataset
-from baseg.samplers import RandomTiledBatchSampler, SequentialTiledSampler
+from baseg.samplers import SequentialTiledSampler
+from baseg.samplers.single import RandomTiledSampler
 
 
 class EMSDataModule(LightningDataModule):
@@ -82,11 +83,8 @@ class EMSDataModule(LightningDataModule):
     def train_dataloader(self):
         return DataLoader(
             self.train_set,
-            batch_sampler=RandomTiledBatchSampler(
-                self.train_set,
-                tile_size=self.patch_size,
-                batch_size=self.batch_size_train,
-            ),
+            sampler=RandomTiledSampler(self.train_set, tile_size=self.patch_size),
+            batch_size=self.batch_size_train,
             num_workers=self.num_workers,
             pin_memory=True,
         )

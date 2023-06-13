@@ -2,7 +2,7 @@ from typing import Any, Callable
 
 import torch
 
-from baseg.losses import SoftBCEWithLogitsLoss, DiceLoss
+from baseg.losses import DiceLoss, SoftBCEWithLogitsLoss
 from baseg.modules.base import BaseModule
 
 
@@ -12,10 +12,11 @@ class SingleTaskModule(BaseModule):
         config: dict,
         tiler: Callable[..., Any] | None = None,
         predict_callback: Callable[..., Any] | None = None,
-        loss: str = "bce"):
+        loss: str = "bce",
+    ):
         super().__init__(config, tiler, predict_callback)
         if loss == "bce":
-            self.criterion_decode = SoftBCEWithLogitsLoss(ignore_index=255)
+            self.criterion_decode = SoftBCEWithLogitsLoss(ignore_index=255, pos_weight=torch.tensor(5.0))
         else:
             self.criterion_decode = DiceLoss(mode="binary", from_logits=True, ignore_index=255)
 

@@ -10,4 +10,10 @@ trainer = dict(
     strategy=None,
     devices=1,
 )
-loss="dice"
+loss = "dice"
+evaluation = dict(
+    precision=16,
+    accelerator="gpu",
+    strategy=None,
+    devices=1,
+)

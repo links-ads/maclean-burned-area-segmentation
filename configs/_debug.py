@@ -9,3 +9,9 @@ trainer = dict(
     strategy=None,
     devices=1,
 )
+evaluation = dict(
+    precision=16,
+    accelerator="gpu",
+    strategy=None,
+    devices=1,
+)
