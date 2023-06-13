@@ -1,5 +1,5 @@
 _base_ = [
-    "./models/upernet_rn50_aux.py",
+    "./models/upernet_vit-b_aux.py",
     "./datasets/ems.py",
 ]
 name = "_debug"
@@ -9,3 +9,4 @@ trainer = dict(
     strategy=None,
     devices=1,
 )
+loss="dice"
