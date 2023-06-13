@@ -24,7 +24,7 @@ model = dict(
         act_cfg=dict(type="GELU"),
         norm_eval=False,
         interpolate_mode="bicubic",
-        pretrained="pretrained/mmseg_vit-s_ss4eo.pth",
+        pretrained="pretrained/mmseg_vit_s_no_pos.pth",
     ),
     neck=dict(type="MultiLevelNeck", in_channels=[384, 384, 384, 384], out_channels=384, scales=[4, 2, 1, 0.5]),
     decode_head=dict(

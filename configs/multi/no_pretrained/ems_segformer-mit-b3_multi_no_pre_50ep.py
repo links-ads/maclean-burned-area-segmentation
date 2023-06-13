@@ -1,8 +1,8 @@
 _base_ = [
-    "./models/segformer_mit-b3.py",
+    "./models/segformer_mit-b3_aux_no_pre.py",
     "./datasets/ems.py",
 ]
-name = "segformer-mit-b3_single_imnet_100ep"
+name = "segformer-mit-b3_multi_no_pre_50ep"
 trainer = dict(
     max_epochs=50,
     precision=16,
