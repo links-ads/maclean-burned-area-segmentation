@@ -1,14 +1,16 @@
 _base_ = [
-    "./models/upernet_rn50_aux.py",
+    "./models/upernet_rn50.py",
     "./datasets/ems.py",
 ]
-name = "_debug"
+name = "upernet-rn50_single_imnet_dice_loss_10ep"
 trainer = dict(
-    max_epochs=100,
-    accelerator="cpu",
+    max_epochs=10,
+    precision=16,
+    accelerator="gpu",
     strategy=None,
     devices=1,
 )
+loss = "dice"
 evaluation = dict(
     precision=16,
     accelerator="gpu",

@@ -2,7 +2,7 @@ from datetime import datetime
 from pathlib import Path
 
 
-def get_experiment_name(name: str) -> str:
+def exp_name_timestamp(name: str) -> str:
     """Generates a name for the experiment starting with the given name and
     appending the current date and time for uniqueness.
 

@@ -1,4 +1,13 @@
-from baseg.models.custom_encoder_decoder import CustomEncoderDecoder
+from baseg.models.encoder_decoder import CustomEncoderDecoder
+from baseg.models.heads import CustomBaseDecodeHead
+from mmseg.registry import MODELS
+
+__all__ = [
+    "CustomEncoderDecoder",
+    "CustomBaseDecodeHead",
+]
 
 
-__all__ = ["CustomEncoderDecoder"]
+def build_model(cfg, **kwargs: dict):
+    """Build model."""
+    return MODELS.build(cfg, **kwargs)
