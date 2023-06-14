@@ -2,7 +2,7 @@ _base_ = [
     "../../models/upernet_rn50_aux.py",
     "../../datasets/ems.py",
 ]
-name = "upernet-rn50_multi_ssl4eo_cropped_lc_50ep"
+name = "upernet-rn50_multi_ssl4eo_auxv2_50ep"
 trainer = dict(
     max_epochs=50,
     precision=16,
