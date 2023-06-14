@@ -1,5 +1,5 @@
 _base_ = [
-    "./models/segformer_mit-b3_no_pre.py",
+    "./models/upernet_rn50.py",
     "./datasets/ems.py",
 ]
 name = "_debug"
@@ -9,7 +9,7 @@ trainer = dict(
     strategy=None,
     devices=1,
 )
-loss="dice"
+loss = "dice"
 evaluation = dict(
     precision=16,
     accelerator="gpu",

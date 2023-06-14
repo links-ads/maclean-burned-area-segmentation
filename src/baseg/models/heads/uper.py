@@ -2,8 +2,8 @@
 import torch
 import torch.nn as nn
 from mmcv.cnn import ConvModule
-
 from mmseg.registry import MODELS
+
 from baseg.models.heads import CustomBaseDecodeHead
 from baseg.models.utils import resize
 
@@ -175,10 +175,6 @@ class CustomUPerHead(CustomBaseDecodeHead):
         feats = self.fpn_bottleneck(fpn_outs)
         return feats
 
-    def forward(self, inputs, return_feat: bool = False):
+    def forward(self, inputs):
         """Forward function."""
-        feat = self._forward_feature(inputs)
-        output = self.cls_seg(feat)
-        if return_feat:
-            return output, feat
-        return output
+        return self._forward_feature(inputs)

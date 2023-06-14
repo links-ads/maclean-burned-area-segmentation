@@ -3,7 +3,6 @@ norm_cfg = dict(type="SyncBN", requires_grad=True)
 model = dict(
     type="CustomEncoderDecoder",
     data_preprocessor=None,
-    
     backbone=dict(
         type="VisionTransformer",
         img_size=(512, 512),
@@ -37,18 +36,7 @@ model = dict(
         num_classes=1,
         norm_cfg=norm_cfg,
         align_corners=False,
-    ),
-    auxiliary_head=dict(
-        type="CustomFCNHead",
-        in_channels=384,
-        in_index=3,
-        channels=256,
-        num_convs=1,
-        concat_input=False,
-        dropout_ratio=0.1,
-        num_classes=11,
-        norm_cfg=norm_cfg,
-        align_corners=False,
+        aux_classes=11,
     ),
     # model training and testing settings
     train_cfg=dict(),

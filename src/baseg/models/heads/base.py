@@ -1,12 +1,14 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from abc import ABCMeta, abstractmethod
 import warnings
-from baseg.models.utils import resize
+from abc import ABCMeta, abstractmethod
+
+import torch
+from mmengine.model import BaseModule
 from mmseg.models.builder import build_loss
 from mmseg.structures import build_pixel_sampler
 from torch import nn
-from mmengine.model import BaseModule
-import torch
+
+from baseg.models.utils import resize
 
 
 class CustomBaseDecodeHead(BaseModule, metaclass=ABCMeta):
@@ -18,6 +20,7 @@ class CustomBaseDecodeHead(BaseModule, metaclass=ABCMeta):
         channels,
         *,
         num_classes,
+        aux_classes=None,
         out_channels=None,
         threshold=None,
         dropout_ratio=0.1,
@@ -86,6 +89,10 @@ class CustomBaseDecodeHead(BaseModule, metaclass=ABCMeta):
             self.sampler = None
 
         self.conv_seg = nn.Conv2d(channels, self.out_channels, kernel_size=1)
+        if aux_classes is not None:
+            self.conv_seg_aux = nn.Conv2d(channels, aux_classes, kernel_size=1)
+        else:
+            self.conv_seg_aux = None
         if dropout_ratio > 0:
             self.dropout = nn.Dropout2d(dropout_ratio)
         else:
@@ -157,9 +164,20 @@ class CustomBaseDecodeHead(BaseModule, metaclass=ABCMeta):
         """Placeholder of forward function."""
         pass
 
+    def has_aux_output(self):
+        """Whether the head has auxiliary output."""
+        return self.conv_seg_aux is not None
+
     def cls_seg(self, feat: torch.Tensor) -> torch.Tensor:
         """Classify each pixel."""
         if self.dropout is not None:
             feat = self.dropout(feat)
         output = self.conv_seg(feat)
+        return output
+
+    def cls_seg_aux(self, feat: torch.Tensor) -> torch.Tensor:
+        """Classify each pixel."""
+        if self.dropout is not None:
+            feat = self.dropout(feat)
+        output = self.conv_seg_aux(feat)
         return output

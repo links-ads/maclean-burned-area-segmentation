@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torchmetrics import F1Score, JaccardIndex
 
-from baseg.losses import SoftBCEWithLogitsLoss, DiceLoss
+from baseg.losses import DiceLoss, SoftBCEWithLogitsLoss
 from baseg.modules.base import BaseModule
 
 
@@ -22,7 +22,7 @@ class MultiTaskModule(BaseModule):
         else:
             self.criterion_decode = DiceLoss(mode="binary", from_logits=True, ignore_index=255)
         self.criterion_auxiliary = nn.CrossEntropyLoss(ignore_index=255)
-        num_classes = config["auxiliary_head"]["num_classes"]
+        num_classes = config.decode_head.aux_classes
         self.train_metrics_aux = nn.ModuleDict(
             {
                 "train_f1_aux": F1Score(task="multiclass", ignore_index=255, num_classes=num_classes, average="macro"),
