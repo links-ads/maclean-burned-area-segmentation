@@ -22,6 +22,7 @@ class MultiTaskModule(BaseModule):
         else:
             self.criterion_decode = DiceLoss(mode="binary", from_logits=True, ignore_index=255)
         self.criterion_auxiliary = nn.CrossEntropyLoss(ignore_index=255)
+        self.aux_factor = config.pop("aux_factor", 1.0)
         num_classes = config.decode_head.aux_classes
         self.train_metrics_aux = nn.ModuleDict(
             {
@@ -55,7 +56,7 @@ class MultiTaskModule(BaseModule):
         decode_out, auxiliary_out = self.model(x)
         loss_decode = self.criterion_decode(decode_out.squeeze(1), y_del.float())
         loss_auxiliary = self.criterion_auxiliary(auxiliary_out, y_lc.long())
-        loss = loss_decode + loss_auxiliary
+        loss = loss_decode + self.aux_factor * loss_auxiliary
 
         self.log("train_loss_del", loss_decode, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log("train_loss_aux", loss_auxiliary, on_step=True, on_epoch=True, prog_bar=True, logger=True)
@@ -77,7 +78,7 @@ class MultiTaskModule(BaseModule):
         decode_out, auxiliary_out = self.model(x)
         loss_decode = self.criterion_decode(decode_out.squeeze(1), y_del.float())
         loss_auxiliary = self.criterion_auxiliary(auxiliary_out, y_lc.long())
-        loss = loss_decode + loss_auxiliary
+        loss = loss_decode + self.aux_factor * loss_auxiliary
 
         self.log("val_loss_del", loss_decode, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log("val_loss_aux", loss_auxiliary, on_step=True, on_epoch=True, prog_bar=True, logger=True)
@@ -99,7 +100,7 @@ class MultiTaskModule(BaseModule):
         decode_out, auxiliary_out = self.model(x)
         loss_decode = self.criterion_decode(decode_out.squeeze(1), y_del.float())
         loss_auxiliary = self.criterion_auxiliary(auxiliary_out, y_lc.long())
-        loss = loss_decode + loss_auxiliary
+        loss = loss_decode + self.aux_factor * loss_auxiliary
 
         self.log("test_loss_del", loss_decode, on_step=True, on_epoch=True, prog_bar=True, logger=True)
         self.log("test_loss_aux", loss_auxiliary, on_step=True, on_epoch=True, prog_bar=True, logger=True)
