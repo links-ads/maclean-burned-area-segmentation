@@ -1,8 +1,8 @@
 _base_ = [
-    "./models/upernet_vit-s_aux_no_pre.py",
-    "./datasets/ems.py",
+    "../../models/upernet_vit-s_aux_no_pre.py",
+    "../../datasets/ems.py",
 ]
-name = "upernet-vit-s_multi_no_pre_50ep"
+name = "upernet-vit-s_multi_no_pre_cropped_lc_50ep"
 trainer = dict(
     max_epochs=50,
     precision=16,
