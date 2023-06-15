@@ -20,7 +20,7 @@ model = dict(
         drop_path_rate=0.1,
     ),
     decode_head=dict(
-        type="SegformerHead",
+        type="CustomSegformerHead",
         in_channels=[32, 64, 160, 256],
         in_index=[0, 1, 2, 3],
         channels=256,
