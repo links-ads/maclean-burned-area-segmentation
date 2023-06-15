@@ -1,4 +1,4 @@
-_base_ = ["./segformer_mit-b0.py"]
+_base_ = ["./segformer_mit-b0_aux.py"]
 norm_cfg = dict(type="SyncBN", requires_grad=True)
 model = dict(
     backbone=dict(
