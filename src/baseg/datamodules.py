@@ -41,7 +41,7 @@ class EMSDataModule(LightningDataModule):
                 A.VerticalFlip(p=0.5),
                 A.RandomRotate90(p=0.5),
                 A.ShiftScaleRotate(rotate_limit=360, value=0, mask_value=255, p=0.5),
-                A.RandomBrightnessContrast(p=0.5, brightness_limit=0.05, contrast_limit=0.05),
+                A.RandomBrightnessContrast(p=0.5, brightness_limit=0.02, contrast_limit=0.02),
                 ToTensorV2(),
             ],
             additional_targets=self.transform_targets,

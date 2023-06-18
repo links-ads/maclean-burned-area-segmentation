@@ -1,10 +1,12 @@
 from pathlib import Path
 from typing import Callable
+
+import numpy as np
+from rasterio.windows import Window
+from torch.utils.data import Dataset
+
 from baseg.io import read_raster, read_raster_profile
 from baseg.samplers.utils import IndexedBounds
-import numpy as np
-from torch.utils.data import Dataset
-from rasterio.windows import Window
 
 
 class EMSImageDataset(Dataset):
@@ -54,7 +56,7 @@ class EMSImageDataset(Dataset):
         1: (255, 187, 34),
         2: (255, 255, 76),
         3: (240, 150, 255),
-        4: (255, 0, 0),
+        4: (250, 0, 0),
         5: (180, 180, 180),
         6: (240, 240, 240),
         7: (0, 100, 200),
@@ -210,5 +212,7 @@ class EMSCropDataset(EMSImageDataset):
             metadata[modality] = str(file_path)
         if self.transform:
             sample = self._postprocess(self.transform(**self._preprocess(sample)))
+        sample["metadata"] = metadata
+        return sample
         sample["metadata"] = metadata
         return sample
