@@ -21,6 +21,7 @@ class CustomBaseDecodeHead(BaseModule, metaclass=ABCMeta):
         *,
         num_classes,
         aux_classes=None,
+        aux_factor=None,
         out_channels=None,
         threshold=None,
         dropout_ratio=0.1,
@@ -91,6 +92,7 @@ class CustomBaseDecodeHead(BaseModule, metaclass=ABCMeta):
         self.conv_seg = nn.Conv2d(channels, self.out_channels, kernel_size=1)
         if aux_classes is not None:
             self.conv_seg_aux = nn.Conv2d(channels, aux_classes, kernel_size=1)
+            self.aux_factor = aux_factor
         else:
             self.conv_seg_aux = None
         if dropout_ratio > 0:

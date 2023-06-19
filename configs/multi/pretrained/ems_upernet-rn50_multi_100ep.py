@@ -1,8 +1,8 @@
 _base_ = [
-    "../../models/segformer_mit-b3_aux.py",
+    "../../models/upernet_rn50_aux.py",
     "../../datasets/ems.py",
 ]
-name = "segformer-mit-b3_multi_imnet_auxv2_50ep"
+name = "upernet-rn50_multi_ssl4eo_auxv2_100ep"
 trainer = dict(
     max_epochs=50,
     precision=16,
@@ -11,8 +11,8 @@ trainer = dict(
     devices=1,
 )
 data = dict(
-    batch_size_train=32,
-    batch_size_eval=32,
+    batch_size_train=64,
+    batch_size_eval=64,
     num_workers=8,
 )
 evaluation = dict(

@@ -1,6 +1,7 @@
 from typing import Any, Callable
 
 import torch
+from loguru import logger
 from torch import nn
 from torchmetrics import F1Score, JaccardIndex
 
@@ -22,8 +23,10 @@ class MultiTaskModule(BaseModule):
         else:
             self.criterion_decode = DiceLoss(mode="binary", from_logits=True, ignore_index=255)
         self.criterion_auxiliary = nn.CrossEntropyLoss(ignore_index=255)
-        self.aux_factor = config.pop("aux_factor", 1.0)
+        self.aux_factor = config.decode_head.pop("aux_factor", 1.0)
         num_classes = config.decode_head.aux_classes
+        logger.info(f"auxiliary factor: {self.aux_factor}")
+        logger.info(f"auxiliary classes: {num_classes}")
         self.train_metrics_aux = nn.ModuleDict(
             {
                 "train_f1_aux": F1Score(task="multiclass", ignore_index=255, num_classes=num_classes, average="macro"),

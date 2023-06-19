@@ -37,6 +37,7 @@ model = dict(
         norm_cfg=norm_cfg,
         align_corners=False,
         aux_classes=11,
+        aux_factor=0.4,
     ),
     # model training and testing settings
     train_cfg=dict(),

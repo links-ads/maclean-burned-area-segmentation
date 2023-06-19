@@ -28,6 +28,7 @@ model = dict(
         dropout_ratio=0.1,
         num_classes=1,
         aux_classes=11,
+        aux_factor=0.4,
         norm_cfg=norm_cfg,
         align_corners=False,
         loss_decode=None,
