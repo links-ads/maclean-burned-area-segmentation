@@ -89,6 +89,10 @@ class CustomFCNHead(CustomBaseDecodeHead):
             feats = self.conv_cat(torch.cat([x, feats], dim=1))
         return feats
 
-    def forward(self, inputs):
+    def forward(self, inputs, return_feat: bool = False):
         """Forward function."""
-        return self._forward_feature(inputs)
+        feat = self._forward_feature(inputs)
+        output = self.cls_seg(feat)
+        if return_feat:
+            return output, feat
+        return output

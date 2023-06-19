@@ -175,6 +175,10 @@ class CustomUPerHead(CustomBaseDecodeHead):
         feats = self.fpn_bottleneck(fpn_outs)
         return feats
 
-    def forward(self, inputs):
+    def forward(self, inputs, return_feat: bool = False):
         """Forward function."""
-        return self._forward_feature(inputs)
+        feat = self._forward_feature(inputs)
+        output = self.cls_seg(feat)
+        if return_feat:
+            return output, feat
+        return output

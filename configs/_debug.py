@@ -1,5 +1,5 @@
 _base_ = [
-    "./models/upernet_rn50.py",
+    "./models/segformer_mit-b3_aux.py",
     "./datasets/ems.py",
 ]
 name = "_debug"

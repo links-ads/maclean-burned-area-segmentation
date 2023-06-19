@@ -45,7 +45,7 @@ class CustomSegformerHead(CustomBaseDecodeHead):
             in_channels=self.channels * num_inputs, out_channels=self.channels, kernel_size=1, norm_cfg=self.norm_cfg
         )
 
-    def forward(self, inputs):
+    def forward(self, inputs, return_feat: bool = False):
         # Receive 4 stage backbone feature map: 1/4, 1/8, 1/16, 1/32
         inputs = self._transform_inputs(inputs)
         outs = []
@@ -62,4 +62,7 @@ class CustomSegformerHead(CustomBaseDecodeHead):
             )
 
         feat = self.fusion_conv(torch.cat(outs, dim=1))
-        return feat
+        out = self.cls_seg(feat)
+        if return_feat:
+            return out, feat
+        return out

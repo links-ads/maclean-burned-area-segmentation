@@ -8,7 +8,8 @@ model = dict(
     ),
     decode_head=dict(
         in_channels=[64, 128, 320, 512],
-        aux_classes=11,
-        aux_factor=0.4,
+    ),
+    auxiliary_head=dict(
+        in_channels=[64, 128, 320, 512],
     ),
 )

@@ -6,4 +6,5 @@ model = dict(
         num_layers=[3, 4, 18, 3],
     ),
     decode_head=dict(in_channels=[64, 128, 320, 512]),
+    auxiliary_head=dict(in_channels=[64, 128, 320, 512]),
 )

@@ -20,13 +20,10 @@ class CustomEncoderDecoder(EncoderDecoder):
             Tensor: Forward output of model without any post-processes.
         """
         x = self.extract_feat(inputs)
-        feat = self.decode_head(x)
-        out = self.decode_head.cls_seg(feat)
-        out = F.interpolate(out, size=inputs.shape[2:], mode="bilinear", align_corners=True)
-
-        if self.decode_head.has_aux_output():
-            aux = self.decode_head.cls_seg_aux(feat)
-            aux = F.interpolate(aux, size=inputs.shape[2:], mode="bilinear", align_corners=True)
-            return out, aux
-
-        return out
+        x_h1 = self.decode_head(x)
+        x_h1 = F.interpolate(x_h1, size=inputs.shape[2:], mode="bilinear", align_corners=True)
+        if self.with_auxiliary_head:
+            x_h2 = self.auxiliary_head(x)
+            x_h2 = F.interpolate(x_h2, size=inputs.shape[2:], mode="bilinear", align_corners=True)
+            return x_h1, x_h2
+        return x_h1

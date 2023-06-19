@@ -23,8 +23,8 @@ class MultiTaskModule(BaseModule):
         else:
             self.criterion_decode = DiceLoss(mode="binary", from_logits=True, ignore_index=255)
         self.criterion_auxiliary = nn.CrossEntropyLoss(ignore_index=255)
-        self.aux_factor = config.decode_head.pop("aux_factor", 1.0)
-        num_classes = config.decode_head.aux_classes
+        self.aux_factor = config.auxiliary_head.loss_weight
+        num_classes = config.auxiliary_head.num_classes
         logger.info(f"auxiliary factor: {self.aux_factor}")
         logger.info(f"auxiliary classes: {num_classes}")
         self.train_metrics_aux = nn.ModuleDict(

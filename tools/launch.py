@@ -40,7 +40,7 @@ def train(
     log.info("Preparing the model...")
     model_config = config["model"]
     loss = config["loss"] if "loss" in config else "bce"
-    module_class = MultiTaskModule if "aux_classes" in model_config["decode_head"] else SingleTaskModule
+    module_class = MultiTaskModule if "auxiliary_head" in model_config else SingleTaskModule
     module = module_class(model_config, loss=loss)
     module.init_pretrained()
 
@@ -109,7 +109,7 @@ def test(
     # prepare the model
     log.info("Preparing the model...")
     model_config = config["model"]
-    module_class = MultiTaskModule if "aux_classes" in model_config["decode_head"] else SingleTaskModule
+    module_class = MultiTaskModule if "auxiliary_head" in model_config else SingleTaskModule
     module = module_class.load_from_checkpoint(checkpoint, **module_opts)
 
     logger = TensorBoardLogger(save_dir="outputs", name=config["name"], version=exp_path.stem)
