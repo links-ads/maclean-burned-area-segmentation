@@ -87,6 +87,7 @@ class EMSImageDataset(Dataset):
         modalities: list[str] = ["S2L2A", "DEL", "ESA_LC", "CM"],
         transform: Callable = None,
         check_integrity: bool = True,
+        mask_landcover: bool = False,
     ):
         self.root = Path(root)
         modalities = set(modalities)
@@ -97,6 +98,7 @@ class EMSImageDataset(Dataset):
         assert "S2L2A" in modalities, "At least S2L2A must be present in the modalities"
         self.modalities = modalities
         self.transform = transform
+        self.mask_landcover = mask_landcover
         self.files = {}
         # gather all the files
         for modality in self.modalities:
@@ -169,7 +171,10 @@ class EMSImageDataset(Dataset):
             cm = sample.pop("CM")
             mask[cm == 1] = 255
             if "ESA_LC" in sample:
-                sample["ESA_LC"][cm == 1] = 255
+                if self.mask_landcover:
+                    sample["ESA_LC"][mask > 0] = 255
+                else:
+                    sample["ESA_LC"][cm == 1] = 255
         sample["mask"] = mask
         return sample
 
@@ -212,7 +217,5 @@ class EMSCropDataset(EMSImageDataset):
             metadata[modality] = str(file_path)
         if self.transform:
             sample = self._postprocess(self.transform(**self._preprocess(sample)))
-        sample["metadata"] = metadata
-        return sample
         sample["metadata"] = metadata
         return sample

@@ -27,6 +27,7 @@ class EMSDataModule(LightningDataModule):
         batch_size_train: int = 8,
         batch_size_eval: int = 16,
         num_workers: int = 4,
+        mask_landcover: bool = False,
     ) -> None:
         super().__init__()
         self.root = root
@@ -35,6 +36,7 @@ class EMSDataModule(LightningDataModule):
         self.batch_size_train = batch_size_train
         self.batch_size_eval = batch_size_eval
         self.num_workers = num_workers
+        self.mask_landcover = mask_landcover
         self.train_transform = A.Compose(
             [
                 A.HorizontalFlip(p=0.5),
@@ -58,12 +60,14 @@ class EMSDataModule(LightningDataModule):
                 subset="train",
                 modalities=self.modalities,
                 transform=self.train_transform,
+                mask_landcover=self.mask_landcover,
             )
             self.val_set = EMSCropDataset(
                 root=self.root,
                 subset="val",
                 modalities=self.modalities,
                 transform=self.eval_transform,
+                mask_landcover=self.mask_landcover,
             )
         elif stage == "test":
             self.test_set = EMSCropDataset(
@@ -71,6 +75,7 @@ class EMSDataModule(LightningDataModule):
                 subset="test",
                 modalities=self.modalities,
                 transform=self.eval_transform,
+                mask_landcover=self.mask_landcover,
             )
         elif stage == "predict":
             self.pred_set = EMSImageDataset(
@@ -78,6 +83,7 @@ class EMSDataModule(LightningDataModule):
                 subset="test",
                 modalities=self.modalities,
                 transform=self.eval_transform,
+                mask_landcover=self.mask_landcover,
             )
 
     def train_dataloader(self):
