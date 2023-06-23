@@ -15,13 +15,16 @@ class MultiTaskModule(BaseModule):
         config: dict,
         tiler: Callable[..., Any] | None = None,
         predict_callback: Callable[..., Any] | None = None,
+        mask_lc: bool = False,
         loss: str = "bce",
+        
     ):
         super().__init__(config, tiler, predict_callback)
         if loss == "bce":
             self.criterion_decode = SoftBCEWithLogitsLoss(ignore_index=255)
         else:
             self.criterion_decode = DiceLoss(mode="binary", from_logits=True, ignore_index=255)
+        self.mask_lc = mask_lc
         self.criterion_auxiliary = nn.CrossEntropyLoss(ignore_index=255)
         self.aux_factor = config.decode_head.pop("aux_factor", 1.0)
         num_classes = config.decode_head.aux_classes
@@ -56,6 +59,8 @@ class MultiTaskModule(BaseModule):
         x = batch["S2L2A"]
         y_del = batch["DEL"]
         y_lc = batch["ESA_LC"]
+        if self.mask_lc:
+            y_lc[y_del == 1] = 255
         decode_out, auxiliary_out = self.model(x)
         loss_decode = self.criterion_decode(decode_out.squeeze(1), y_del.float())
         loss_auxiliary = self.criterion_auxiliary(auxiliary_out, y_lc.long())
@@ -78,6 +83,8 @@ class MultiTaskModule(BaseModule):
         x = batch["S2L2A"]
         y_del = batch["DEL"]
         y_lc = batch["ESA_LC"]
+        if self.mask_lc:
+            y_lc[y_del == 1] = 255
         decode_out, auxiliary_out = self.model(x)
         loss_decode = self.criterion_decode(decode_out.squeeze(1), y_del.float())
         loss_auxiliary = self.criterion_auxiliary(auxiliary_out, y_lc.long())
@@ -100,6 +107,8 @@ class MultiTaskModule(BaseModule):
         x = batch["S2L2A"]
         y_del = batch["DEL"]
         y_lc = batch["ESA_LC"]
+        if self.mask_lc:
+            y_lc[y_del == 1] = 255
         decode_out, auxiliary_out = self.model(x)
         loss_decode = self.criterion_decode(decode_out.squeeze(1), y_del.float())
         loss_auxiliary = self.criterion_auxiliary(auxiliary_out, y_lc.long())

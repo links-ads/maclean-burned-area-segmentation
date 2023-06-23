@@ -23,6 +23,9 @@ class SingleTaskModule(BaseModule):
     def training_step(self, batch: Any, batch_idx: int):
         x = batch["S2L2A"]
         y_del = batch["DEL"]
+
+        # lc = batch["ESA_LC"]
+        # x = torch.cat([x, lc.unsqueeze(1)], dim=1)
         decode_out = self.model(x)
         loss_decode = self.criterion_decode(decode_out.squeeze(1), y_del.float())
         loss = loss_decode
@@ -36,6 +39,8 @@ class SingleTaskModule(BaseModule):
     def validation_step(self, batch: Any, batch_idx: int):
         x = batch["S2L2A"]
         y_del = batch["DEL"]
+        # lc = batch["ESA_LC"]
+        # x = torch.cat([x, lc.unsqueeze(1)], dim=1)
         decode_out = self.model(x)
         loss_decode = self.criterion_decode(decode_out.squeeze(1), y_del.float())
         loss = loss_decode
@@ -49,6 +54,8 @@ class SingleTaskModule(BaseModule):
     def test_step(self, batch: Any, batch_idx: int):
         x = batch["S2L2A"]
         y_del = batch["DEL"]
+        # lc = batch["ESA_LC"]
+        # x = torch.cat([x, lc.unsqueeze(1)], dim=1)
         decode_out = self.model(x)
         loss_decode = self.criterion_decode(decode_out.squeeze(1), y_del.float())
         loss = loss_decode

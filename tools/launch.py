@@ -42,7 +42,7 @@ def train(
     model_config = config["model"]
     loss = config["loss"] if "loss" in config else "bce"
     module_class = MultiTaskModule if "aux_classes" in model_config["decode_head"] else SingleTaskModule
-    module = module_class(model_config, loss=loss)
+    module = module_class(model_config, loss=loss, mask_lc=config["mask_lc"]) if "mask_lc" in config else module_class(model_config, loss=loss) 
     module.init_pretrained()
 
     log.info("Preparing the trainer...")
@@ -95,6 +95,8 @@ def test(
     log.info(f"Using checkpoint: {checkpoint}")
 
     module_opts = dict(config=config["model"])
+    loss = config["loss"] if "loss" in config else "bce"
+    module_opts.update( loss=loss)
     if predict:
         tiler = SmoothTiler(
             tile_size=config["data"]["patch_size"],
@@ -182,5 +184,5 @@ def process_inference(
 
 
 if __name__ == "__main__":
-    seed_everything(57, workers=True)
+    seed_everything(95, workers=True)
     cli()
