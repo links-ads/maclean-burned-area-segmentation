@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import partial
 from pathlib import Path
 
@@ -121,6 +122,46 @@ def test(
         log.info("Starting the testing...")
         trainer = Trainer(**config["evaluation"], logger=logger)
         trainer.test(module, datamodule=datamodule)
+
+
+@cli.command()
+def test_multi(
+    root: Path = ArgField("-r", description="Path to the root folder of the experiments."),
+    from_date: datetime = ArgField("-f", default=None, description="Start date for the experiments to test."),
+    epoch: int = ArgField("-e", default=None, description="Number of epochs to test."),
+):
+    assert root.exists(), f"Root folder does not exist: {root}"
+    experiments = [d for d in root.iterdir() if d.is_dir() and not d.name.startswith("_")]
+
+    for exp_path in experiments:
+        exp_path = exp_path / "version_0"
+        log.info(f"Testing experiment: {exp_path}")
+        config_path = exp_path / "config.py"
+        weights_path = exp_path / "weights"
+
+        if not config_path.exists():
+            log.warning(f"Config file not found in: {config_path}")
+            continue
+        if not weights_path.exists():
+            log.warning(f"Models folder not found in: {weights_path}")
+            continue
+
+        # parse timestamp with format <name_with_underscores>_<date>_<time>, exclude the name
+        timestamp = "_".join(exp_path.parent.stem.split("_")[-2:])
+        timestamp = datetime.strptime(timestamp, "%Y%m%d_%H%M%S")
+        if from_date and timestamp < from_date:
+            log.info(f"Skipping experiment from {timestamp}, too old.")
+            continue
+
+        checkpoint = None
+        if epoch is not None:
+            checkpoint = list(weights_path.glob(f"model-epoch={epoch}*.ckpt"))
+            if not checkpoint:
+                log.warning(f"Checkpoint not found for epoch {epoch} in: {weights_path}")
+                continue
+            checkpoint = checkpoint[0]
+
+        test.callback(exp_path, checkpoint=checkpoint)
 
 
 def process_inference(
