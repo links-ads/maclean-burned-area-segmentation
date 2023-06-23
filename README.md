@@ -1,5 +1,6 @@
-# Burned Area Segmentation
-Burned area segmentation from Sentinel-2 using multi-task learning
+# Robust Burned Area Delineation through Multitask Learning
+
+> Dataset coming soon!
 
 ## Installation
 
