@@ -1,5 +1,5 @@
 _base_ = [
-    "./models/upernet_rn50.py",
+    "./models/upernet_rn50_aux.py",
     "./datasets/ems.py",
 ]
 name = "_debug"
@@ -10,6 +10,7 @@ trainer = dict(
     devices=1,
 )
 loss = "dice"
+mask_lc = True
 evaluation = dict(
     precision=16,
     accelerator="gpu",
