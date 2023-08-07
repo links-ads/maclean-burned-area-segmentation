@@ -58,7 +58,7 @@ This folder can later be used to resume training or perform inference.
 Using `mmseg` configuration files (sort of), you can train a model by running:
 
 ```console
-$ python tools/base.py train -c <config_path>
+$ python tools/launch.py train -c <config_path>
 ```
 
 ### Testing and Inference
@@ -67,9 +67,9 @@ Once a model has been trained, you can test it by running:
 
 ```console
 # if you just want to compute the metrics
-$ python tools/base.py test -e <experiment_path> [-c <checkpoint_path>]
+$ python tools/launch.py test -e <experiment_path> [-c <checkpoint_path>]
 # if you want to save the predictions
-$ python tools/base.py test -e <experiment_path> [-c <checkpoint_path>] --predict
+$ python tools/launch.py test -e <experiment_path> [-c <checkpoint_path>] --predict
 ```
 
 Where `experiment_path` is the full or relative path to the experiment directory (including the version subdir),
