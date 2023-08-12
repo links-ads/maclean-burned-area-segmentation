@@ -1,6 +1,9 @@
 # Robust Burned Area Delineation through Multitask Learning
 
-> Dataset coming soon!
+Code and dataset for *Robust Burned Area Delineation through Multitask Learning, (ECML PKDD, MACLEAN Workshop 2023)*
+
+> [!NOTE]  
+> Dataset available at [hf.co/datasets/links-ads/wildfires-cems](https://huggingface.co/datasets/links-ads/wildfires-cems).
 
 ## Installation
 
@@ -75,4 +78,12 @@ $ python tools/launch.py test -e <experiment_path> [-c <checkpoint_path>] --pred
 Where `experiment_path` is the full or relative path to the experiment directory (including the version subdir),
 and `checkpoint_path` is the full or relative path to the checkpoint file (including the `.pth` extension).
 
-
+## Citing this work
+```
+@inproceedings{arnaudo2023burned,
+  title={Robust Burned Area Delineation through Multitask Learning},
+  author={Arnaudo, Edoardo and Barco, Luca and Merlo, Matteo and Rossi, Claudio},
+  booktitle={Conference on Machine Learning and Principles and Practice of Knowledge Discovery in Databases},
+  year={2023}
+}
+```
